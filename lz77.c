@@ -13,9 +13,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define TRUE  1
-#define FALSE 0
-
 #define WINDOW_SIZE    4096
 #define LOOKAHEAD_SIZE 128
 
