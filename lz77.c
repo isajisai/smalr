@@ -1,12 +1,9 @@
+
 /*
-
 	Project: LZ77 compressor (DEMO)
-
 	File: lz77.c
 	Description: main module
-
 	Written by pongozolin, isajisai (2017)
-
 */
 
 #include <stdio.h>
