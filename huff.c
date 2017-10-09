@@ -16,13 +16,13 @@ typedef struct node {
 	struct node *left;
 	struct node *right;
 	unsigned int weight;
-	char item;
 } Node; 
 
 Node* scan_file(FILE *in_file) {
 	Node *dictionary = (Node *)calloc(ASCII_SIZE, sizeof(Node));
 	int ch;
-	while(1) {
+
+	for(;;) {
 		ch = fgetc(in_file);
 		if(ch == EOF) break;
 		++dictionary[ch].weight;
