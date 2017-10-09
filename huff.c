@@ -9,9 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h> // FOR TESTING 
 
-#define ASCII_SIZE	128
+#define ASCII_SIZE			128
 
 typedef struct node {
 	struct node *left;
@@ -33,7 +32,6 @@ Node* scan_file(FILE *in_file) {
 }
 
 int main(int argc, char *argv[]) {
-	clock_t t = clock(); // FOR TESTING
 	FILE *in_file;
 
 	if(argc != 2) {
@@ -45,13 +43,13 @@ int main(int argc, char *argv[]) {
 
 	// Check to see if dictionaries are made and work.
 	Node *table = scan_file(in_file);
-	int count = 0;
+	int c = 0;
 
-	while(count < ASCII_SIZE) {
-		printf("%i: The count for %c \tis: %i\n", count, count, table[count].weight);
+	while(c < ASCII_SIZE) {
+		printf("%i: The count for %c \tis: %i\n", c, c, table[c].weight);
 		count++;
 	}
-	printf("Time to complete operation: %i\n", clock()-t);
+	free(table);
 }
 
 
