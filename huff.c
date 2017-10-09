@@ -2,7 +2,7 @@
 /*
 	Project: Huffman compressor
 	File: huff.c
-	Description: main module
+	Description: structure-packed main module, implicit implementation for speed
 	Written by pongozolin, isajisai (2017)
 */
 
@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ASCII_SIZE		256
+#define ASCII_SIZE	128
 
 typedef struct node {
 	struct node *left;
@@ -42,6 +42,10 @@ int main(int argc, char *argv[]) {
 
 	// Check to see if dictionaries are made and work.
 	Node *table = scan_file(in_file);
-	printf("%i\n", table[36].weight);
-	printf("%i\n", table[10].weight);
+	int count = 0;
+
+	while(count < ASCII_SIZE) {
+		printf("%i: The count for %c \tis: %i\n", count, count, table[count].weight);
+		count++;
+	}
 }
