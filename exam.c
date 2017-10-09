@@ -15,7 +15,22 @@ typedef struct dog {
 	unsigned int num_woofs;
 } Dog;
 
-int main() {
+int count_chars(FILE *in_file) {
+	int ch;
+	int count = 0;
+	while(1) {
+		ch = fgetc(in_file);
+		if(ch == EOF) break;
+		count++;
+	}
+	return count;
+}
+
+int main(int argc, char **argv) {
+	char *FILE_NAME = argv[1];
+	FILE *in_file = fopen(FILE_NAME, "r");
+	printf("%i\n", count_chars(in_file));
+
 	Dog *pupp_zone = (Dog *)calloc(256, sizeof(Dog));
 	pupp_zone[33].num_woofs = 25;
 	pupp_zone[33].next_pupp = &pupp_zone[45];

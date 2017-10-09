@@ -12,13 +12,36 @@
 
 #define ASCII_SIZE		256
 
-typedef struct Node {
-	Node *left;
-	Node *right;
+typedef struct node {
+	struct node *left;
+	struct node *right;
 	unsigned int weight;
 	char item;
+} Node; 
+
+Node* scan_file(FILE *in_file) {
+	Node *dictionary = (Node *)calloc(ASCII_SIZE, sizeof(Node));
+	int ch;
+	while(1) {
+		ch = fgetc(in_file);
+		if(ch == EOF) break;
+		++dictionary[ch].weight;
+	}
+	return dictionary;
 }
 
-void scan_file() {
-	Node *dictionary = (Node *)calloc(ASCII_SIZE, size_of(Node));
+int main(int argc, char *argv[]) {
+	FILE *in_file;
+
+	if(argc != 2) {
+		printf("Usage: %s <input file>\n", argv[0]);
+		return 0;
+	} else {
+		in_file = fopen(argv[1], "r");
+	}
+
+	// Check to see if dictionaries are madeand work.
+	Node *table = scan_file(in_file);
+	printf("%i\n", table[36].weight);
+	printf("%i\n", table[10].weight);
 }
