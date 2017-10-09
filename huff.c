@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h> // FOR TESTING 
 
 #define ASCII_SIZE	128
 
@@ -19,6 +20,7 @@ typedef struct node {
 } Node; 
 
 Node* scan_file(FILE *in_file) {
+
 	Node *dictionary = (Node *)calloc(ASCII_SIZE, sizeof(Node));
 	int ch;
 
@@ -31,6 +33,7 @@ Node* scan_file(FILE *in_file) {
 }
 
 int main(int argc, char *argv[]) {
+	clock_t t = clock(); // FOR TESTING
 	FILE *in_file;
 
 	if(argc != 2) {
@@ -48,4 +51,7 @@ int main(int argc, char *argv[]) {
 		printf("%i: The count for %c \tis: %i\n", count, count, table[count].weight);
 		count++;
 	}
+	printf("Time to complete operation: %i\n", clock()-t);
 }
+
+
