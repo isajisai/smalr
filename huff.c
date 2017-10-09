@@ -14,7 +14,12 @@
 #define ASCII_MAX		255
 
 typedef struct Node {
-	Node* next;
+	Node *left;
+	Node *right;
 	unsigned int weight;
 	char item;
+}
+
+void scan_file() {
+	Node *dictionary = (Node *)calloc(ASCII_SIZE, size_of(Node));
 }
