@@ -10,8 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_BUFFER_SIZE	256
-#define ASCII_MAX		255
+#define ASCII_SIZE		256
 
 typedef struct Node {
 	Node *left;
