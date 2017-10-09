@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 		in_file = fopen(argv[1], "r");
 	}
 
-	// Check to see if dictionaries are madeand work.
+	// Check to see if dictionaries are made and work.
 	Node *table = scan_file(in_file);
 	printf("%i\n", table[36].weight);
 	printf("%i\n", table[10].weight);
