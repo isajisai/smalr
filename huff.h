@@ -19,6 +19,22 @@ void switch_Nodes(Node **a, Node **b) {
 	*b = t;
 }
 
+void print_arr(int arr[], int count) {
+	int i = 0;
+	while (i < count) printf("%i", arr[i++]);
+	printf("\n");
+}
+
+int is_leaf(Node* root) {
+    return !(root->left) && !(root->right) ;
+}
+ 
+void print_codes(Node* root, int arr[], int top) {
+    if (root->left) { arr[top] = 0; print_codes(root->left, arr, top + 1); }
+    if (root->right) { arr[top] = 1; print_codes(root->right, arr, top + 1); }
+    if (is_leaf(root)) { printf("%c: ", root->data); print_arr(arr, top); }
+}
+
 // heap methods
 MinHeap* make_MinHeap() {
 	MinHeap *to_return = (MinHeap *)calloc(1, sizeof(MinHeap));
@@ -68,7 +84,7 @@ Node* combine_Nodes(Node *lighter_Node, Node *heavier_Node) {
 void huff_iteration(MinHeap **heap) {
 	add_to_heap(combine_Nodes(((*heap)->array)[0], ((*heap)->array)[1]), *heap);
 	shift_up_2(*heap);
-	((*heap)->size) -= 2;
+	(*heap)->size -= 2;
 }
 
 MinHeap* scan_file(FILE *in_file) {

@@ -23,8 +23,9 @@ int main(int argc, char *argv[]) {
 
 	// Check to see if dictionaries are made and work.
 	MinHeap *DATA_HEAP = scan_file(in_file);
-	while(DATA_HEAP->size > 20) huff_iteration(&DATA_HEAP);
-	naive_print(DATA_HEAP);
-	printf("%c\n", ((DATA_HEAP->array)[0])->data);;
+	while(DATA_HEAP->size > 1) huff_iteration(&DATA_HEAP);
+	int arr[ASCII_SIZE];
+	print_codes((DATA_HEAP->array)[0], arr, 0);
+	free(DATA_HEAP);
 	return 0;
 }
