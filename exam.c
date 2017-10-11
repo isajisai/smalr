@@ -27,8 +27,15 @@ int count_chars(FILE *in_file) {
 }
 
 int main(int argc, char **argv) {
-	char *FILE_NAME = argv[1];
-	FILE *in_file = fopen(FILE_NAME, "r");
+	FILE *in_file;
+
+	if(argc != 2) {
+		printf("Usage: %s <input file>\n", argv[0]);
+		return 0;
+	} else {
+		in_file = fopen(argv[1], "r");
+	}
+
 	printf("%i\n", count_chars(in_file));
 
 	Dog *pupp_zone = (Dog *)calloc(256, sizeof(Dog));
