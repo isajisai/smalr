@@ -57,7 +57,8 @@ void shift_up_2(MinHeap *heap)
 	}
 }
 
-void add_to_heap(Node *to_add, MinHeap *heap) {
+void add_to_heap(Node *to_add, MinHeap *heap) 
+{
 	int pos = (heap->size)++;
 	(heap->array)[pos] = to_add;
 	if (heap->size > 2) 
@@ -89,7 +90,8 @@ void huff_iteration(MinHeap *heap)
 
 Node* build_hufftree(MinHeap *heap) 
 {
-	while (heap->size > 1) huff_iteration(heap);
+	while (heap->size > 1) 
+		huff_iteration(heap);
 	return (heap->array)[0];
 }
 
@@ -143,7 +145,8 @@ void build_pairings(Node* root, int arr[], int top, Pair *pairs)
     if (!(root->left) && !(root->right)) 
     { 
     	char index = root->data;
-    	for (int i = 0; i < top; i++) (pairs[index].arr)[i] = arr[i]; 
+    	for (int i = 0; i < top; i++) 
+    		(pairs[index].arr)[i] = arr[i]; 
     	(pairs[index]).length = top; 
     	(pairs[index]).data = root->data;
     }
@@ -181,7 +184,6 @@ int main(int argc, char *argv[])
 		printf("Usage: %s <input file>\n", argv[0]); 
 		return 0; 
 	}
-	
 	FILE *in_file = fopen(argv[1], "r");
 	FILE *out_file = fopen("out.smal", "wb");
 	int arr[ASCII_SIZE];
