@@ -32,7 +32,8 @@ typedef struct pair {
 
 void switch_Nodes(Node **a, Node **b) {
 	Node *t = *a;
-	*a = *b; *b = t;
+	*a = *b; 
+	*b = t;
 }
 
 int is_leaf(Node* root) {
@@ -69,7 +70,7 @@ void add_to_heap(Node *to_add, MinHeap *heap) {
 Node* combine_Nodes(Node *lighter_Node, Node *heavier_Node) {
 	Node *new_Node = (Node *)calloc(1, sizeof(Node));
 
-	new_Node->left = lighter_Node;
+	new_Node->left = lighter_Node; 
 	new_Node->right = heavier_Node;
 	new_Node->weight = lighter_Node->weight + heavier_Node->weight;
 	return new_Node;
@@ -82,7 +83,7 @@ void huff_iteration(MinHeap *heap) {
 }
 
 Node* build_hufftree(MinHeap *heap) {
-	while(heap->size > 1) huff_iteration(heap);
+	while (heap->size > 1) huff_iteration(heap);
 	return (heap->array)[0];
 }
 
@@ -99,10 +100,9 @@ void print_codes(Node* root, int arr[], int top) {
 
 
 void encode(FILE *in_file, FILE *out_file, Pair *pairs) {
-	int i_count;
-	int ch;
+	int i_count, ch;
 
-	for(;;) {
+	for (;;) {
 		ch = fgetc(in_file);
 		if (ch == EOF) break;
 		print_arr(pairs[ch].arr, pairs[ch].length);
@@ -111,21 +111,12 @@ void encode(FILE *in_file, FILE *out_file, Pair *pairs) {
 }
 
 void build_pairings(Node* root, int arr[], int top, Pair *pairs) {
-	if (root->left) { 
-		arr[top] = 0; 
-		build_pairings(root->left, arr, top + 1, pairs); 
-	}
-    if (root->right) { 
-    	arr[top] = 1; 
-    	build_pairings(root->right, arr, top + 1, pairs); 
-    }
+	if (root->left) { arr[top] = 0; build_pairings(root->left, arr, top + 1, pairs); }
+    if (root->right) { arr[top] = 1; build_pairings(root->right, arr, top + 1, pairs); }
     if (is_leaf(root)) { 
-    	int index = (int) root->data;
-    	for (int i = 0; i < top; i++) {
-    		((pairs[index]).arr)[i] = arr[i];
-    	}
-    	(pairs[index]).length = top;
-    	(pairs[index]).data = root->data;
+    	char index = root->data;
+    	for (int i = 0; i < top; i++) { ((pairs[index]).arr)[i] = arr[i]; }
+    	(pairs[index]).length = top; (pairs[index]).data = root->data;
     }
 }
 
@@ -140,7 +131,7 @@ MinHeap* scan_file(FILE *in_file) {
 		++dictionary[ch].weight;
 	}
 
-	for (ch = 0; ch < ASCII_SIZE-1; ch++) {
+	for (ch = 0; ch < ASCII_SIZE; ch++) {
 		if (dictionary[ch].weight == 0) continue;
 		dictionary[ch].data = ch;
 		add_to_heap(&(dictionary[ch]), heap);
@@ -149,30 +140,20 @@ MinHeap* scan_file(FILE *in_file) {
 } 
 
 int main(int argc, char *argv[]) {
-	FILE *in_file;
-
-	if (argc != 3) {
-		printf("Usage: %s <input file> <output file>\n", argv[0]);
-		return 0;
-	} else {
-		in_file = fopen(argv[1], "r");
-	}
+	if (argc != 3) { printf("Usage: %s <input file> <output file>\n", argv[0]); return 0; }
+	
+	FILE in_file = fopen(argv[1], "r");
+	FILE *in_file2 = fopen(argv[1], "r");
+	FILE *out_file = fopen(argv[2], "w+");
+	int arr[ASCII_SIZE];
 
 	// PROCEDURE 
 	MinHeap *DATA_HEAP = scan_file(in_file);
 	Pair *pairs = (Pair *)calloc(ASCII_SIZE, sizeof(Pair));
-	int arr[ASCII_SIZE];
 	build_pairings(build_hufftree(DATA_HEAP), arr, 0, pairs);
 	
 	// ENCODING
-	FILE *in_file2 = fopen(argv[1], "r");
-	FILE *out_file = fopen(argv[2], "w+");
 	encode(in_file2, out_file, pairs);
 
 	free(DATA_HEAP);
 }
-
-
-
-
-
