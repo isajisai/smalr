@@ -16,7 +16,7 @@
 typedef struct node {
 	struct node *left, *right;
 	unsigned weight;
-	int data;
+	char data;
 } Node; 
 
 typedef struct heap {
@@ -24,29 +24,21 @@ typedef struct heap {
 	Node *array[ASCII_SIZE];
 } MinHeap;
 
+typedef struct pair {
+	int arr[ASCII_SIZE/4];
+	int length;
+	char data;
+} Pair;
+
 void switch_Nodes(Node **a, Node **b) {
 	Node *t = *a;
-	*a = *b;
-	*b = t;
-}
-
-void print_arr(int arr[], int count) {
-	int i = 0;
-	while (i < count) printf("%i", arr[i++]);
-	printf("\n");
+	*a = *b; *b = t;
 }
 
 int is_leaf(Node* root) {
     return !(root->left) && !(root->right) ;
 }
- 
-void print_codes(Node* root, int arr[], int top) {
-    if (root->left) { arr[top] = 0; print_codes(root->left, arr, top + 1); }
-    if (root->right) { arr[top] = 1; print_codes(root->right, arr, top + 1); }
-    if (is_leaf(root)) { printf("%c: ", root->data); print_arr(arr, top); }
-}
 
-// heap methods
 MinHeap* make_MinHeap() {
 	MinHeap *to_return = (MinHeap *)calloc(1, sizeof(MinHeap));
 	to_return->size = 0;
@@ -74,15 +66,6 @@ void add_to_heap(Node *to_add, MinHeap *heap) {
 	return;
 }
 
-void naive_print(MinHeap *heap) {
-	int i = 0;
-	while (i < heap->size) {
-		printf("%i\n", (*((heap->array)[i])).weight);
-		++i;
-	}
-	return;
-}
-
 Node* combine_Nodes(Node *lighter_Node, Node *heavier_Node) {
 	Node *new_Node = (Node *)calloc(1, sizeof(Node));
 
@@ -92,10 +75,58 @@ Node* combine_Nodes(Node *lighter_Node, Node *heavier_Node) {
 	return new_Node;
 }
 
-void huff_iteration(MinHeap **heap) {
-	add_to_heap(combine_Nodes(((*heap)->array)[0], ((*heap)->array)[1]), *heap);
-	shift_up_2(*heap);
-	(*heap)->size -= 2;
+void huff_iteration(MinHeap *heap) {
+	add_to_heap(combine_Nodes((heap->array)[0], (heap->array)[1]), heap);
+	shift_up_2(heap);
+	heap->size -= 2;
+}
+
+Node* build_hufftree(MinHeap *heap) {
+	while(heap->size > 1) huff_iteration(heap);
+	return (heap->array)[0];
+}
+
+void print_arr(int arr[], int count) {
+	int i = 0;
+	while (i < count) printf("%i", arr[i++]);
+}
+
+void print_codes(Node* root, int arr[], int top) {
+    if (root->left) { arr[top] = 0; print_codes(root->left, arr, top + 1); }
+    if (root->right) { arr[top] = 1; print_codes(root->right, arr, top + 1); }
+    if (is_leaf(root)) { printf("%c: ", root->data); print_arr(arr, top); }
+}
+
+
+void encode(FILE *in_file, FILE *out_file, Pair *pairs) {
+	int i_count;
+	int ch;
+
+	for(;;) {
+		ch = fgetc(in_file);
+		if (ch == EOF) break;
+		print_arr(pairs[ch].arr, pairs[ch].length);
+	}
+	fclose(out_file);
+}
+
+void build_pairings(Node* root, int arr[], int top, Pair *pairs) {
+	if (root->left) { 
+		arr[top] = 0; 
+		build_pairings(root->left, arr, top + 1, pairs); 
+	}
+    if (root->right) { 
+    	arr[top] = 1; 
+    	build_pairings(root->right, arr, top + 1, pairs); 
+    }
+    if (is_leaf(root)) { 
+    	int index = (int) root->data;
+    	for (int i = 0; i < top; i++) {
+    		((pairs[index]).arr)[i] = arr[i];
+    	}
+    	(pairs[index]).length = top;
+    	(pairs[index]).data = root->data;
+    }
 }
 
 MinHeap* scan_file(FILE *in_file) {
@@ -120,18 +151,28 @@ MinHeap* scan_file(FILE *in_file) {
 int main(int argc, char *argv[]) {
 	FILE *in_file;
 
-	if (argc != 2) {
-		printf("Usage: %s <input file>\n", argv[0]);
+	if (argc != 3) {
+		printf("Usage: %s <input file> <output file>\n", argv[0]);
 		return 0;
 	} else {
 		in_file = fopen(argv[1], "r");
 	}
 
-	// Check to see if dictionaries are made and work.
+	// PROCEDURE 
 	MinHeap *DATA_HEAP = scan_file(in_file);
-	while(DATA_HEAP->size > 1) huff_iteration(&DATA_HEAP);
+	Pair *pairs = (Pair *)calloc(ASCII_SIZE, sizeof(Pair));
 	int arr[ASCII_SIZE];
-	print_codes((DATA_HEAP->array)[0], arr, 0);
+	build_pairings(build_hufftree(DATA_HEAP), arr, 0, pairs);
+	
+	// ENCODING
+	FILE *in_file2 = fopen(argv[1], "r");
+	FILE *out_file = fopen(argv[2], "w+");
+	encode(in_file2, out_file, pairs);
+
 	free(DATA_HEAP);
-	return 0;
 }
+
+
+
+
+
