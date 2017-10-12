@@ -12,7 +12,6 @@
 #include <time.h>
 
 #define ASCII_SIZE			128
-#define MAX_PAIRS			64
 
 typedef struct node {
 	struct node *left, *right;
@@ -66,7 +65,6 @@ void add_to_heap(Node *to_add, MinHeap *heap) {
 
 Node* combine_Nodes(Node *lighter_Node, Node *heavier_Node) {
 	Node *new_Node = (Node *)calloc(1, sizeof(Node));
-
 	new_Node->left = lighter_Node; 
 	new_Node->right = heavier_Node;
 	new_Node->weight = lighter_Node->weight + heavier_Node->weight;
@@ -125,7 +123,7 @@ void build_pairings(Node* root, int arr[], int top, Pair *pairs) {
 }
 
 MinHeap* scan_file(FILE *in_file) {
-	Node *dictionary = (Node *)calloc(ASCII_SIZE+MAX_PAIRS, sizeof(Node));
+	Node *dictionary = (Node *)calloc(ASCII_SIZE, sizeof(Node));
 	MinHeap *heap = (MinHeap *)calloc(1, sizeof(MinHeap));
 	int ch;
 
