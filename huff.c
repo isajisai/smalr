@@ -46,8 +46,7 @@ void shift_up_2(MinHeap *heap) {
 	int i = 0;
 	while (i < heap->size) {
 		(heap->array)[i] = (heap->array)[i+2];
-		(heap->array)[i+1] = (heap->array)[i+3];
-		++i;
+		(heap->array)[i+1] = (heap->array)[i+3]; i++;
 	}
 }
 
@@ -91,7 +90,7 @@ void encode(FILE *in_file, FILE *out_file, Pair *pairs) {
 		ch = fgetc(in_file);
 		if (ch == EOF) break;
 		i = 0;
-		while (i < (pairs[ch]).length) {
+		while (i++ < (pairs[ch]).length) {
 			buffer <<= 1;
 			buffer += ((pairs[ch]).arr)[i];
 			curr_size++;
@@ -100,12 +99,11 @@ void encode(FILE *in_file, FILE *out_file, Pair *pairs) {
 				curr_size = 0;
 				buffer = 0;
 			}
-			++i;
 		}
 	}
 	while (curr_size < 8) {
 		buffer <<= 1;
-		++curr_size;
+		curr_size++;
 	}
 	rewind(in_file);
 	fwrite(&buffer, 1, 1, out_file);
@@ -130,7 +128,7 @@ MinHeap* scan_file(FILE *in_file) {
 	for (;;) {
 		ch = fgetc(in_file);
 		if (ch == EOF) break;
-		++dictionary[ch].weight;
+		dictionary[ch].weight++;
 	}
 
 	for (ch = 0; ch < ASCII_SIZE; ch++) {
