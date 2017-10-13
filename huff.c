@@ -53,7 +53,8 @@ void shift_up_2(MinHeap *heap)
 	while (i < heap->size) 
 	{
 		(heap->array)[i] = (heap->array)[i+2];
-		(heap->array)[i+1] = (heap->array)[i+3]; i++;
+		(heap->array)[i+1] = (heap->array)[i+3]; 
+		i++;
 	}
 }
 
@@ -132,10 +133,10 @@ void encode(FILE *in_file, FILE *out_file, Pair *pairs)
 
 void build_pairings(Node* root, int arr[], int top, Pair *pairs) 
 {
-	if (root->left) 
+	if (root->left) 	
 	{ 
-		arr[top] = 0; 
-		build_pairings(root->left, arr, top + 1, pairs); 
+	arr[top] = 0; 
+	build_pairings(root->left, arr, top + 1, pairs); 
 	}
     if (root->right) 
     { 
@@ -185,7 +186,7 @@ int main(int argc, char *argv[])
 		return 0; 
 	}
 	FILE *in_file = fopen(argv[1], "r");
-	FILE *out_file = fopen("out.smal", "wb");
+	FILE *out_file = fopen("out.txt", "wb");
 	int arr[ASCII_SIZE];
 
 	// PROCEDURE 
@@ -199,7 +200,7 @@ int main(int argc, char *argv[])
 	encode(in_file, out_file, pairs);
 
 	// CLEANUP AND PROCESSING
-	FILE *read_out = fopen("out.smal", "r");
+	FILE *read_out = fopen("out.txt", "r");
 	fseek(in_file, 0L, SEEK_END); fseek(read_out, 0L, SEEK_END);
 	int before = ftell(in_file); 
 	int after = ftell(read_out);
