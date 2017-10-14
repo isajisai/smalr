@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
 	// PROCEDURE 
 	printf("Reading file...\n");
 	MinHeap *DATA_HEAP = scan_file(in_file);
-	Pair *pairs = (Pair *)calloc(ASCII_SIZE, sizeof(Pair));
+	Pair *pairs = calloc(ASCII_SIZE, sizeof(Pair));
 	build_pairings(build_hufftree(DATA_HEAP), arr, 0, pairs);
 	
 	// ENCODING
