@@ -50,7 +50,7 @@ MinHeap* make_MinHeap()
 void shift_up_2(MinHeap *heap) 
 {
 	int i = 0;
-	while (i < heap->size) 
+	while(i < heap->size) 
 	{
 		(heap->array)[i] = (heap->array)[i+2];
 		(heap->array)[i+1] = (heap->array)[i+3]; 
@@ -62,12 +62,12 @@ void add_to_heap(Node *to_add, MinHeap *heap)
 {
 	int pos = (heap->size)++;
 	(heap->array)[pos] = to_add;
-	if (heap->size > 2) 
+	if(heap->size > 2) 
 	{
-		while ((heap->array)[pos-1]->weight > (heap->array)[pos]->weight)  
+		while((heap->array)[pos-1]->weight > (heap->array)[pos]->weight)  
 		{
 			switch_Nodes(&(heap->array[pos-1]), &(heap->array[pos]));
-			if (--pos == 0) 
+			if(--pos == 0) 
 				break;
 		}
 	}
@@ -91,7 +91,7 @@ void huff_iteration(MinHeap *heap)
 
 Node* build_hufftree(MinHeap *heap) 
 {
-	while (heap->size > 1) 
+	while(heap->size > 1) 
 		huff_iteration(heap);
 	return (heap->array)[0];
 }
@@ -102,18 +102,18 @@ void encode(FILE *in_file, FILE *out_file, Pair *pairs)
 	int curr_size = 0;
 	unsigned buffer = 0;
 
-	for (;;) 
+	for(;;) 
 	{
 		ch = fgetc(in_file);
-		if (ch == EOF) 
+		if(ch == EOF) 
 			break; 
 		i = 0;
-		while (i++ < (pairs[ch]).length) 
+		while(i++ < (pairs[ch]).length) 
 		{
 			buffer <<= 1;
 			buffer += (pairs[ch].arr)[i];
 			curr_size++;
-			if (curr_size == 8) 
+			if(curr_size == 8) 
 			{
 				fwrite(&buffer, 1, 1, out_file);
 				curr_size = 0;
@@ -121,7 +121,7 @@ void encode(FILE *in_file, FILE *out_file, Pair *pairs)
 			}
 		}
 	}
-	while (curr_size < 8) 
+	while(curr_size < 8) 
 	{
 		buffer <<= 1;
 		curr_size++;
@@ -133,20 +133,20 @@ void encode(FILE *in_file, FILE *out_file, Pair *pairs)
 
 void build_pairings(Node* root, int arr[], int top, Pair *pairs) 
 {
-	if (root->left) 	
+	if(root->left) 	
 	{ 
 		arr[top] = 0; 
 		build_pairings(root->left, arr, top + 1, pairs); 
 	}
-    if (root->right) 
+    if(root->right) 
     { 
     	arr[top] = 1; 
     	build_pairings(root->right, arr, top + 1, pairs); 
     }
-    if (!(root->left) && !(root->right)) 
+    if(!(root->left) && !(root->right)) 
     { 
     	char index = root->data;
-    	for (int i = 0; i < top; i++) 
+    	for(int i = 0; i < top; i++) 
     		(pairs[index].arr)[i] = arr[i]; 
     	(pairs[index]).length = top; 
     	(pairs[index]).data = root->data;
@@ -159,16 +159,16 @@ MinHeap* scan_file(FILE *in_file)
 	MinHeap *heap = calloc(1, sizeof(MinHeap));
 	int ch;
 
-	for (;;) 
+	for(;;) 
 	{
 		ch = fgetc(in_file);
-		if (ch == EOF) 
+		if(ch == EOF) 
 			break;
 		dictionary[ch].weight++;
 	}
-	for (ch = 0; ch < ASCII_SIZE; ch++) 
+	for(ch = 0; ch < ASCII_SIZE; ch++) 
 	{
-		if (dictionary[ch].weight == 0) 
+		if(dictionary[ch].weight == 0) 
 			continue;
 		dictionary[ch].data = ch;
 		add_to_heap(&(dictionary[ch]), heap);
@@ -180,7 +180,7 @@ MinHeap* scan_file(FILE *in_file)
 int main(int argc, char *argv[]) 
 {
 	double c = clock();
-	if (argc != 2) 
+	if(argc != 2) 
 	{ 
 		printf("Usage: %s <input file>\n", argv[0]); 
 		return 0; 
@@ -201,13 +201,15 @@ int main(int argc, char *argv[])
 
 	// CLEANUP AND PROCESSING
 	FILE *read_out = fopen("out", "r");
-	fseek(in_file, 0L, SEEK_END); fseek(read_out, 0L, SEEK_END);
+	fseek(in_file, 0L, SEEK_END); 
+	fseek(read_out, 0L, SEEK_END);
 	int before = ftell(in_file); 
 	int after = ftell(read_out);
-	free(DATA_HEAP);
-	free(pairs);
 	double curr_time = (clock() - c) / CLOCKS_PER_SEC;
 	double efficiency = 100 - (((double) after / (double) before) * 100);
 	printf("Compressed %i bytes into %i bytes in %f seconds \n", before, after, curr_time);
 	printf("Achieved %f %% compression.\n", efficiency);
+	free(DATA_HEAP);
+	free(pairs);
+	return 0;
 }

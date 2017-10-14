@@ -42,7 +42,8 @@ main(int argc, char *argv[])
 	int i;
 	int retval = 0;
 
-	if(argc < 3) {
+	if(argc < 3) 
+	{
 		printf("Usage: %s <input file> <output file>\n", argv[0]);
 		return 0;
 	}
@@ -57,13 +58,15 @@ compress(char *in, char *out)
 	int retval = 0;
 
 	fin = fopen(in, "rb");
-	if(fin == NULL) {
+	if(fin == NULL) 
+	{
 		fprintf(stderr, "Could not open input file '%s'\n", in);
 		return -1;
 	}
 
 	fout = fopen(out, "wb");
-	if(fout == NULL) {
+	if(fout == NULL) 
+	{
 		fprintf(stderr, "Could not open output file '%s'\n", out);
 		fclose(fin);
 		return -1;
@@ -87,7 +90,8 @@ lz77(FILE *fin, FILE *fout)
 	int c;
 
 	read = fread(slider + WINDOW_SIZE, 1, LOOKAHEAD_SIZE, fin);
-	if(read != LOOKAHEAD_SIZE && ferror(fin)) {
+	if(read != LOOKAHEAD_SIZE && ferror(fin)) 
+	{
 		fprintf(stderr, "Error reading from the input file!\n");
 		return -1;
 	}
@@ -104,7 +108,8 @@ lz77(FILE *fin, FILE *fout)
 		tlength = triplet.length + 1;
 		slidecount = tlength;
 
-		if(wsize < WINDOW_SIZE) {
+		if(wsize < WINDOW_SIZE) 
+		{
 			unsigned lesser;
 
 			lesser = WINDOW_SIZE - wsize < tlength ? WINDOW_SIZE - wsize : tlength;
@@ -115,14 +120,16 @@ lz77(FILE *fin, FILE *fout)
 			slidecount -= lesser;
 		}
 
-		if(slidecount > 0) {
+		if(slidecount > 0) 
+		{
 			/* slide the entire slider */
 			memmove(slider, slider + slidecount, WINDOW_SIZE + LOOKAHEAD_SIZE - slidecount);
 			lsize -= slidecount;
 		}
 
 		read = fread(slider + WINDOW_SIZE + lsize, 1, tlength, fin);
-		if(read != tlength && ferror(fin)) {
+		if(read != tlength && ferror(fin)) 
+		{
 			fprintf(stderr, "Error reading from the input file!\n");
 			return -1;
 		}
@@ -146,17 +153,21 @@ find_match(Triplet *tbuf, Symbol *window, unsigned wsize, Symbol *lookahead, uns
 	tbuf->nextsym = *lookahead;
 
 	/* when we have no window, the default case holds true */
-	if(wsize == 0) return;
+	if(wsize == 0) 
+		return;
 
 	pos = wsize - 1;
 
-	for(;;) {
+	for(;;) 
+	{
 		unsigned wpos = pos, lpos = 0, mpos;
 		unsigned len = 0;
 		int wposzero = 0;
 
-		while(window[wpos] != lookahead[lpos]) {
-			if(wpos == 0) {
+		while(window[wpos] != lookahead[lpos]) 
+		{
+			if(wpos == 0) 
+			{
 				wposzero = 1;
 				break;
 			}
@@ -164,17 +175,20 @@ find_match(Triplet *tbuf, Symbol *window, unsigned wsize, Symbol *lookahead, uns
 			--wpos;
 		}
 
-		if(wposzero) break; /* no more searching */
+		if(wposzero) 
+			break; /* no more searching */
 
 		mpos = wpos;
 
-		while(lpos < lsize - 1 && wpos < wsize && window[wpos] == lookahead[lpos]) {
+		while(lpos < lsize - 1 && wpos < wsize && window[wpos] == lookahead[lpos]) 
+		{
 			++wpos;
 			++lpos;
 			++len;
 		}
 
-		if(len > matchlen) {
+		if(len > matchlen) 
+		{
 			update = 1;
 			matchlen = len;
 			matchpos = mpos;
@@ -187,7 +201,8 @@ find_match(Triplet *tbuf, Symbol *window, unsigned wsize, Symbol *lookahead, uns
 		pos = mpos - 1;
 	}
 
-	if(update) {
+	if(update) 
+	{
 		tbuf->offset  = wsize - matchpos;
 		tbuf->length  = matchlen;
 		tbuf->nextsym = lookahead[matchlen];
