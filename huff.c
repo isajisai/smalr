@@ -13,41 +13,41 @@
 
 #define ASCII_SIZE			128
 
-typedef struct NODE 
+typedef struct node 
 {
-	struct NODE *left, *right;
+	struct node *left, *right;
 	unsigned weight;
 	char data;
-} NODE; 
+} Node; 
 
 typedef struct heap 
 {
 	unsigned size;
-	NODE *array[ASCII_SIZE];
-} MIN_HEAP;
+	Node *array[ASCII_SIZE];
+} MinHeap;
 
-typedef struct PAIR 
+typedef struct pair 
 {
 	int arr[ASCII_SIZE/4];
 	int length;
 	char data;
-} PAIR;
+} Pair;
 
-void switch_NODEs(NODE **a, NODE **b) 
+void switch_Nodes(Node **a, Node **b) 
 {
-	NODE *t = *a;
+	Node *t = *a;
 	*a = *b; 
 	*b = t;
 }
 
-MIN_HEAP* make_MIN_HEAP() 
+MinHeap* make_MinHeap() 
 {
-	MIN_HEAP *to_return = calloc(1, sizeof(MIN_HEAP));
+	MinHeap *to_return = calloc(1, sizeof(MinHeap));
 	to_return->size = 0;
 	return to_return;
 }
 
-void shift_up_2(MIN_HEAP *heap) 
+void shift_up_2(MinHeap *heap) 
 {
 	int i = 0;
 	while (i < heap->size) 
@@ -58,7 +58,7 @@ void shift_up_2(MIN_HEAP *heap)
 	}
 }
 
-void add_to_heap(NODE *to_add, MIN_HEAP *heap) 
+void add_to_heap(Node *to_add, MinHeap *heap) 
 {
 	int pos = (heap->size)++;
 	(heap->array)[pos] = to_add;
@@ -66,37 +66,37 @@ void add_to_heap(NODE *to_add, MIN_HEAP *heap)
 	{
 		while ((heap->array)[pos-1]->weight > (heap->array)[pos]->weight)  
 		{
-			switch_NODEs(&(heap->array[pos-1]), &(heap->array[pos]));
+			switch_Nodes(&(heap->array[pos-1]), &(heap->array[pos]));
 			if (--pos == 0) 
 				break;
 		}
 	}
 }
 
-NODE* combine_NODEs(NODE *lighter_NODE, NODE *heavier_NODE) 
+Node* combine_Nodes(Node *lighter_Node, Node *heavier_Node) 
 {
-	NODE *new_NODE = calloc(1, sizeof(NODE));
-	new_NODE->left = lighter_NODE; 
-	new_NODE->right = heavier_NODE;
-	new_NODE->weight = lighter_NODE->weight + heavier_NODE->weight;
-	return new_NODE;
+	Node *new_Node = calloc(1, sizeof(Node));
+	new_Node->left = lighter_Node; 
+	new_Node->right = heavier_Node;
+	new_Node->weight = lighter_Node->weight + heavier_Node->weight;
+	return new_Node;
 }
 
-void huff_iteration(MIN_HEAP *heap) 
+void huff_iteration(MinHeap *heap) 
 {
-	add_to_heap(combine_NODEs((heap->array)[0], (heap->array)[1]), heap);
+	add_to_heap(combine_Nodes((heap->array)[0], (heap->array)[1]), heap);
 	shift_up_2(heap);
 	heap->size -= 2;
 }
 
-NODE* build_hufftree(MIN_HEAP *heap) 
+Node* build_hufftree(MinHeap *heap) 
 {
 	while (heap->size > 1) 
 		huff_iteration(heap);
 	return (heap->array)[0];
 }
 
-void encode(FILE *in_file, FILE *out_file, PAIR *pairs) 
+void encode(FILE *in_file, FILE *out_file, Pair *pairs) 
 {
 	int i, ch;
 	int curr_size = 0;
@@ -131,17 +131,17 @@ void encode(FILE *in_file, FILE *out_file, PAIR *pairs)
 	fclose(out_file);
 }
 
-void build_PAIRings(NODE* root, int arr[], int top, PAIR *pairs) 
+void build_pairings(Node* root, int arr[], int top, Pair *pairs) 
 {
 	if (root->left) 	
 	{ 
 	arr[top] = 0; 
-	build_PAIRings(root->left, arr, top + 1, pairs); 
+	build_pairings(root->left, arr, top + 1, pairs); 
 	}
     if (root->right) 
     { 
     	arr[top] = 1; 
-    	build_PAIRings(root->right, arr, top + 1, pairs); 
+    	build_pairings(root->right, arr, top + 1, pairs); 
     }
     if (!(root->left) && !(root->right)) 
     { 
@@ -153,10 +153,10 @@ void build_PAIRings(NODE* root, int arr[], int top, PAIR *pairs)
     }
 }
 
-MIN_HEAP* scan_file(FILE *in_file) 
+MinHeap* scan_file(FILE *in_file) 
 {
-	NODE *dictionary = calloc(ASCII_SIZE, sizeof(NODE));
-	MIN_HEAP *heap = calloc(1, sizeof(MIN_HEAP));
+	Node *dictionary = calloc(ASCII_SIZE, sizeof(Node));
+	MinHeap *heap = calloc(1, sizeof(MinHeap));
 	int ch;
 
 	for (;;) 
@@ -191,9 +191,9 @@ int main(int argc, char *argv[])
 
 	// PROCEDURE 
 	printf("Reading file...\n");
-	MIN_HEAP *DATA_HEAP = scan_file(in_file);
-	PAIR *pairs = (PAIR *)calloc(ASCII_SIZE, sizeof(PAIR));
-	build_PAIRings(build_hufftree(DATA_HEAP), arr, 0, pairs);
+	MinHeap *DATA_HEAP = scan_file(in_file);
+	Pair *pairs = (Pair *)calloc(ASCII_SIZE, sizeof(Pair));
+	build_pairings(build_hufftree(DATA_HEAP), arr, 0, pairs);
 	
 	// ENCODING
 	printf("Compressing...\n");
