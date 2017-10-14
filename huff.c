@@ -135,8 +135,8 @@ void build_pairings(Node* root, int arr[], int top, Pair *pairs)
 {
 	if (root->left) 	
 	{ 
-	arr[top] = 0; 
-	build_pairings(root->left, arr, top + 1, pairs); 
+		arr[top] = 0; 
+		build_pairings(root->left, arr, top + 1, pairs); 
 	}
     if (root->right) 
     { 
