@@ -3,7 +3,7 @@
 	Project: Huffman compressor
 	File: huff.c
 	Description: structure-packed main module, implicit implementation for speed
-	Written by pongozolin, isajisai (2017)
+	Author: isajisai (2017)
 */
 
 #include <stdio.h>
@@ -13,36 +13,36 @@
 
 #define ASCII_SIZE	128
 
-typedef struct node {
+struct node {
 	struct node *left, *right;
-	unsigned weight;
+	unsigned int weight;
 	char data;
-} Node; 
+}; 
 
-typedef struct heap {
-	unsigned size;
-	Node *array[ASCII_SIZE];
-} MinHeap;
+struct heap {
+	unsigned int size;
+	struct node *array[ASCII_SIZE];
+};
 
-typedef struct pair {
+struct pair {
 	int arr[ASCII_SIZE/4];
 	int length;
 	char data;
-} Pair;
+};
 
-void switch_Nodes(Node **a, Node **b) {
-	Node *t = *a;
+void switch_nodes(struct node **a, struct node **b) {
+	struct node *t = *a;
 	*a = *b; 
 	*b = t;
 }
 
-MinHeap* make_MinHeap() {
-	MinHeap *to_return = calloc(1, sizeof(MinHeap));
+struct heap* make_heap() {
+	struct heap *to_return = calloc(1, sizeof(struct heap));
 	to_return->size = 0;
 	return to_return;
 }
 
-void shift_up_2(MinHeap *heap) {
+void shift_up_2(struct heap *heap) {
 	int i = 0;
 	while (i < heap->size) {
 		(heap->array)[i] = (heap->array)[i+2];
@@ -52,38 +52,38 @@ void shift_up_2(MinHeap *heap) {
 	heap->size -= 2;
 }
 
-void add_to_heap(Node *to_add, MinHeap *heap) {
+void add_to_heap(struct node *to_add, struct heap *heap) {
 	int pos = heap->size++;
 	heap->array[pos] = to_add;
 	if (heap->size > 2) {
 		while ((heap->array[pos-1])->weight > (heap->array[pos])->weight) {
-			switch_Nodes(&(heap->array[pos-1]), &(heap->array[pos]));
+			switch_nodes(&(heap->array[pos-1]), &(heap->array[pos]));
 			if (--pos == 0) 
 				break;
 		}
 	}
 }
 
-Node* combine_Nodes(Node *lighter_Node, Node *heavier_Node) {
-	Node *new_Node = calloc(1, sizeof(Node));
-	new_Node->left = lighter_Node; 
-	new_Node->right = heavier_Node;
-	new_Node->weight = lighter_Node->weight + heavier_Node->weight;
-	return new_Node;
+struct node* combine_nodes(struct node *lighter_node, struct node *heavier_node) {
+	struct node *new_node = calloc(1, sizeof(struct node));
+	new_node->left = lighter_node; 
+	new_node->right = heavier_node;
+	new_node->weight = lighter_node->weight + heavier_node->weight;
+	return new_node;
 }
 
-Node* build_hufftree(MinHeap *heap) {
+struct node* build_hufftree(struct heap *heap) {
 	while (heap->size > 1) {
-		add_to_heap(combine_Nodes(heap->array[0], heap->array[1]), heap);
+		add_to_heap(combine_nodes(heap->array[0], heap->array[1]), heap);
         	shift_up_2(heap);
 	}
 	return heap->array[0];
 }
 
-void encode(FILE *in_file, FILE *out_file, Pair *pairs) {
+void encode(FILE *in_file, FILE *out_file, struct pair *pairs) {
 	int i, ch;
 	int curr_size = 0;
-	unsigned buffer = 0;
+	unsigned int buffer = 0;
 
 	for (;;) {
 		ch = fgetc(in_file);
@@ -112,7 +112,7 @@ void encode(FILE *in_file, FILE *out_file, Pair *pairs) {
 	fclose(out_file);
 }
 
-void build_pairings(Node* root, int arr[], int top, Pair *pairs) {
+void build_pairings(struct node* root, int arr[], int top, struct pair *pairs) {
 	if (root->left) { 
 		arr[top] = 0; 
 		build_pairings(root->left, arr, top + 1, pairs); 
@@ -130,9 +130,9 @@ void build_pairings(Node* root, int arr[], int top, Pair *pairs) {
     }
 }
 
-MinHeap* scan_file(FILE *in_file) {
-	Node *dictionary = calloc(ASCII_SIZE, sizeof(Node));
-	MinHeap *heap = calloc(1, sizeof(MinHeap));
+struct heap* scan_file(FILE *in_file) {
+	struct node *dictionary = calloc(ASCII_SIZE, sizeof(struct node));
+	struct heap *heap = calloc(1, sizeof(struct heap));
 	int ch;
 
 	for(;;) {
@@ -167,9 +167,9 @@ int main(int argc, char *argv[]) {
 
 	// Preprocessing data 
 	printf("Reading file...\n");
-	MinHeap *DATA_HEAP = scan_file(in_file);
-	Pair *pairs = calloc(ASCII_SIZE, sizeof(Pair));
-	build_pairings(build_hufftree(DATA_HEAP), arr, 0, pairs);
+	struct heap *_main_heap = scan_file(in_file);
+	struct pair *pairs = calloc(ASCII_SIZE, sizeof(struct pair));
+	build_pairings(build_hufftree(_main_heap), arr, 0, pairs);
 	
 	// Encoding
 	printf("Compressing...\n");
@@ -187,7 +187,7 @@ int main(int argc, char *argv[]) {
 	double efficiency = 100 - (((double) after / (double) before) * 100);
 	printf("Compressed %i bytes into %i bytes in %f seconds \n", before, after, curr_time);
 	printf("Achieved %f %% compression.\n", efficiency);
-	free(DATA_HEAP);
+	free(_main_heap);
 	free(pairs);
 	return 0;
 }
